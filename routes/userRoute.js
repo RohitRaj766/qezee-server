@@ -6,7 +6,7 @@ const Quizlist = require('../model/quizlist')
 
 router.get('/quizzesList', async (req, res) => {
     try {
-        const quizzes = await Quizlist.find({}, 'title date time');
+        const quizzes = await Quizlist.find();
         res.status(200).json(quizzes);
     } catch (error) {
         console.error(error);
