@@ -1,0 +1,4 @@
+# ADD THOSE FILE AND FOLDER WHICH YOU DON'T WANT TO PUSH IN GIT
+
+/node_modules
+.env
