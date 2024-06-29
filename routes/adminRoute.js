@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const AdminUser = require('../model/admin');
 const Quiz = require('../model/quiz');
+const Quizlist = require('../model/quizlist');
 const {generateToken} = require('../config/jwt')
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -33,6 +34,14 @@ router.post('/createQuizzes', authMiddleware, async (req, res) => {
             questions
         });
         
+
+        const quizlist = new Quizlist({
+            title,
+            time,
+            date
+        });
+        
+        await quizlist.save();
         await newQuiz.save();
 
         res.status(201).json({ message: "New quiz added successfully", newQuiz });

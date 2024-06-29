@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/authMiddleware');
+// const authMiddleware = require('../middleware/authMiddleware');
 const Quiz = require('../model/quiz')
+const Quizlist = require('../model/quizlist')
 
-router.get('/quizzesList', authMiddleware, async (req, res) => {
+router.get('/quizzesList', async (req, res) => {
     try {
-        const quizzes = await Quiz.find({}, 'title date time');
+        const quizzes = await Quizlist.find({}, 'title date time');
         res.status(200).json(quizzes);
     } catch (error) {
         console.error(error);
@@ -13,9 +14,9 @@ router.get('/quizzesList', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/quiz/:id', authMiddleware, async (req, res) => {
+router.get('/quiz/:title', async (req, res) => {
     try {
-        const quiz = await Quiz.findById(req.params.id);
+        const quiz = await Quiz.findOne({title:req.params.title});
         if (!quiz) {
             return res.status(404).json({ message: "Quiz not found" });
         }
