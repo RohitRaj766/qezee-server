@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const {generateToken} = require('../config/jwt');
-const authMiddleware = require('../middleware/authMiddleware');
+const { userMiddleware} = require('../middleware/authMiddleware');
 const Quiz = require('../model/quiz')
 const Quizlist = require('../model/quizlist')
 const User = require('../model/user')
 
-router.get('/quizzesList', authMiddleware, async (req, res) => {
+router.get('/quizzesList', userMiddleware, async (req, res) => {
     try {
         const quizzes = await Quizlist.find();
         res.status(200).json(quizzes);
@@ -17,7 +17,7 @@ router.get('/quizzesList', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/quiz/:title',authMiddleware, async (req, res) => {
+router.get('/quiz/:title',userMiddleware, async (req, res) => {
     try {
         const quiz = await Quiz.findOne({title:req.params.title});
         if (!quiz) {
@@ -72,7 +72,7 @@ router.post('/login', async(req,res) => {
                 if(!email || !password) return res.status(400).json({ error: "All fields are required" });
                 const userExsit = await User.findOne({email:email})
                 if(!userExsit) return res.status(404).json({ error: "User Not Found" });
-                const matchedPassword = bcrypt.compare(password,userExsit.password)
+                const matchedPassword = await bcrypt.compare(password,userExsit.password)
                 if(!matchedPassword) return res.status(401).json({ error: "invalid credentials" }); 
                 const authtok = await generateToken(userExsit._id)
                 res.status(200).json({ message: "login successfull", LoggedInUser: userExsit, authtoken: authtok});

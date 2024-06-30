@@ -4,7 +4,7 @@ const AdminUser = require('../model/admin');
 const Quiz = require('../model/quiz');
 const Quizlist = require('../model/quizlist');
 const {generateToken} = require('../config/jwt')
-const authMiddleware = require('../middleware/authMiddleware');
+const {adminMiddleware} = require('../middleware/authMiddleware');
 
 router.post('/login', async(req, res) => {
     try {
@@ -20,7 +20,7 @@ router.post('/login', async(req, res) => {
     }
 });
 
-router.post('/createQuizzes', authMiddleware, async (req, res) => {
+router.post('/createQuizzes', adminMiddleware, async (req, res) => {
     try {
         const { title, time, date, questions } = req.body;
 
@@ -52,7 +52,7 @@ router.post('/createQuizzes', authMiddleware, async (req, res) => {
 });
 
 
-router.get('/totalQuizzes',authMiddleware,async (req, res) => {
+router.get('/totalQuizzes',adminMiddleware,async (req, res) => {
     try {
         const quizzes = await Quiz.find();
         res.status(200).json(quizzes);

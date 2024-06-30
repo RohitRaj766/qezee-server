@@ -15,6 +15,7 @@ const generateToken = async (user) => {
 const verifyToken = async (token) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("decoded :: ",decoded)
         return decoded;
     } catch (error) {
         throw error;
