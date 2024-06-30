@@ -1,19 +1,31 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const AdminUser = require('../model/admin');
 const Quiz = require('../model/quiz');
 const Quizlist = require('../model/quizlist');
 const {generateToken} = require('../config/jwt')
 const {adminMiddleware} = require('../middleware/authMiddleware');
 
-router.post('/login', async(req, res) => {
+router.post('/login', async (req, res) => {
     try {
-        const user = await AdminUser.findOne({username:req.body.username});
-        if(!user) return res.status(404).json({message:"no user found"});
-        if(user.password == req.body.password) {
-            const authTok = await generateToken(user);
-            res.status(200).json({message: `Login Successful`, authToken: authTok});
-        }else{res.status(401).json({message: `Invalid Password Or Username`})}
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: "Username and password are required" });
+        }
+
+        const user = await AdminUser.findOne({ username: username });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid password" });
+        }
+
+        const authToken = await generateToken(user._id);
+        res.status(200).json({ message: "Login successful", authToken: authToken });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
