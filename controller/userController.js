@@ -195,9 +195,10 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
     const authtok = await generateToken(userExsit._id);
+    const { password: _, ...userWithoutPassword } = userExsit.toObject();
     res.status(200).json({
       message: "Login successful",
-      LoggedInUser: userExsit,
+      LoggedInUser: userWithoutPassword,
       authtoken: authtok,
     });
   } catch (error) {
