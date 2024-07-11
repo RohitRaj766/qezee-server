@@ -4,7 +4,7 @@ const Quiz = require("../model/quiz");
 const Quizlist = require("../model/quizlist");
 const { calculateReputation, generateOTP } = require('../utils');
 const sendMail = require('../config/mailer');
-const { generateToken } = require("../config/jwt");
+const { generateToken,verifyToken } = require("../config/jwt");
 
 let otpStore = {};
 
@@ -207,6 +207,23 @@ const loginUser = async (req, res) => {
   }
 };
 
+const verifyUserToken = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header not found' });
+  }
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+   const result = await verifyToken(token);
+   const userExsit = await User.findOne({ _id: result.id });
+    if (!result) {
+      return res.status(401).json({ message: 'Token is not valid' });
+    }
+    res.status(200).json({ LoggedInUser: userExsit });
+};
+
 module.exports = {
   registerUser,
   verifyOtp,
@@ -214,5 +231,6 @@ module.exports = {
   getLeaderboard,
   getQuizzesList,
   getQuizByTitle,
-  loginUser
+  loginUser,
+  verifyUserToken
 };
