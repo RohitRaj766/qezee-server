@@ -208,20 +208,29 @@ const loginUser = async (req, res) => {
 };
 
 const verifyUserToken = async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Authorization header not found' });
-  }
-  const token = authHeader.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
-   const result = await verifyToken(token);
-   const userExsit = await User.findOne({ _id: result.id });
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Authorization header not found' });
+    }
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+    const result = await verifyToken(token);
     if (!result) {
       return res.status(401).json({ message: 'Token is not valid' });
     }
-    res.status(200).json({ LoggedInUser: userExsit });
+    const userExsit = await User.findById(result.id);
+    if (!userExsit) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const { password, ...WithoutPassword } = userExsit.toObject();
+    res.status(200).json({ LoggedInUser: WithoutPassword });
+  } catch (error) {
+    console.error('Error in verifyUserToken:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 module.exports = {
