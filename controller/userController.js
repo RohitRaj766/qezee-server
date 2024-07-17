@@ -142,6 +142,7 @@ const getLeaderboard = async (req, res) => {
 
       return {
         firstname: user.firstname,
+        lastname:user.lastname,
         college: user.college,
         enrollment: user.enrollment,
         totalCorrect: totalCorrect,
