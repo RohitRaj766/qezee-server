@@ -134,15 +134,15 @@ const updateUser = async (req, res) => {
 
 const getLeaderboard = async (req, res) => {
   try {
-    const users = await User.find({}, 'firstname college enrollment totalquestions.correct');
+    const users = await User.find({}, 'firstname lastname college enrollment totalquestions.correct');
 
     const leaderboard = users.map(user => {
       const totalCorrect = user.totalquestions.correct || 0;
       const reputation = calculateReputation(totalCorrect);
-
+      
       return {
         firstname: user.firstname,
-        lastname:user.lastname,
+        lastname: user.lastname,
         college: user.college,
         enrollment: user.enrollment,
         totalCorrect: totalCorrect,
