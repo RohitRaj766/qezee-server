@@ -135,11 +135,10 @@ const updateUser = async (req, res) => {
 const getLeaderboard = async (req, res) => {
   try {
     const users = await User.find({}, 'firstname lastname college enrollment totalquestions.correct');
-
-    const leaderboard = users.map(user => {
+    users.sort((a, b) => b.totalquestions.correct - a.totalquestions.correct);
+      const leaderboard = users.map((user, index) => {
       const totalCorrect = user.totalquestions.correct || 0;
-      const reputation = calculateReputation(totalCorrect);
-      
+      const reputation = calculateReputation(totalCorrect, index);
       return {
         firstname: user.firstname,
         lastname: user.lastname,
@@ -149,8 +148,6 @@ const getLeaderboard = async (req, res) => {
         reputation: reputation
       };
     });
-
-    leaderboard.sort((a, b) => b.totalCorrect - a.totalCorrect);
     res.status(200).json(leaderboard);
   } catch (error) {
     console.error(error);
