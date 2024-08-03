@@ -25,10 +25,9 @@ const quizSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    time: {
-        type: String,
-        required: true
-    },
+    startTime: { type: String, required: true },
+    expireTime: { type: String, required: true },
+    quizStatus: { type: String, required: true },
     date: {
         type: Date,
         default: Date.now

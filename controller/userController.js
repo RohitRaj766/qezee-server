@@ -167,7 +167,7 @@ const getQuizzesList = async (req, res) => {
 
 const getQuizByTitle = async (req, res) => {
   try {
-    const quiz = await Quiz.findOne({ title: req.params.title });
+    const quiz = await Quiz.findOne({ title: req.query.title });
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
