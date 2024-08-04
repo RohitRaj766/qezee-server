@@ -9,7 +9,8 @@ const {
   loginUser,
   verifyUserToken,
   getQuizzesList,
-  getQuizByTitle
+  getQuizByTitle,
+  updateQuizResults 
 } = require("../controller/userController");
 
 router.post("/registration", registerUser);
@@ -20,5 +21,6 @@ router.get("/leaderboard", userMiddleware, getLeaderboard);
 router.get("/verify-token", userMiddleware, verifyUserToken);
 router.get("/quiz-list", userMiddleware, getQuizzesList);
 router.get("/quiz-title", userMiddleware, getQuizByTitle);
+router.patch("/submit-result", userMiddleware, updateQuizResults);
 
 module.exports = router;
