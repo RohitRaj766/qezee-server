@@ -231,6 +231,50 @@ const verifyUserToken = async (req, res) => {
   }
 };
 
+
+const updateQuizResults = async (req, res) => {
+  try {
+    const { email } = req.query;
+    const { quizTopic, correct, wrong, notattempted } = req.body;
+    
+    const user = await User.findOne({ email: email });
+    const quizExist = await Quiz.findOne({ title: quizTopic });
+    
+    if (!user) return res.status(404).json({ message: "User not found" }); 
+    if (!quizExist) return res.status(404).json({ message: "Quiz Not Exists" });
+    
+    if (user.totalquestions) {
+      user.totalquestions.correct += correct;
+      user.totalquestions.wrong += wrong;
+      user.totalquestions.notattempted += notattempted;
+    }
+    if (!user.totalquizzes) {
+      user.totalquizzes = new Map();
+    }
+    if (user.totalquizzes.has(quizTopic)) {
+      const quizData = user.totalquizzes.get(quizTopic);
+      quizData.correct = correct;
+      quizData.wrong = wrong;
+      quizData.notattempted = notattempted;
+    } else {
+     user.totalquizzes.set(quizTopic, {
+        name: quizTopic,
+        correct: correct,
+        wrong: wrong,
+        notattempted: notattempted
+      });
+    }
+    // Convert Map to plain object to save in MongoDB
+    user.markModified('totalquizzes');
+
+    await user.save();
+    res.status(200).json({ message: "Quiz results updated successfully", totalquizzes: user.totalquizzes, totalquestions: user.totalquestions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   registerUser,
   verifyOtp,
@@ -239,5 +283,6 @@ module.exports = {
   getQuizzesList,
   getQuizByTitle,
   loginUser,
-  verifyUserToken
+  verifyUserToken,
+  updateQuizResults
 };
