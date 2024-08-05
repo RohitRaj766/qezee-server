@@ -72,10 +72,7 @@ const userSchema = new mongoose.Schema({
       default: 0
     }
   },
-  totalquizzes: {
-    type: Map,
-    of: quizSchema
-  }
+  totalquizzes: [quizSchema] 
 });
 
 const User = mongoose.model('User', userSchema, 'user');
