@@ -235,7 +235,7 @@ const verifyUserToken = async (req, res) => {
 const updateQuizResults = async (req, res) => {
   try {
     const { email } = req.query;
-    const { quizTopic, correct, wrong, notattempted, quizStatus } = req.body;
+    const { quizId, quizTopic, correct, wrong, notattempted, quizStatus } = req.body;
 
     const user = await User.findOne({ email: email });
 
@@ -249,26 +249,21 @@ const updateQuizResults = async (req, res) => {
       user.totalquestions.notattempted += notattempted;
     }
 
-    const existingQuiz = await Quizlist.findOne({title: quizTopic});
-    const existingQuizWithQuestion = await Quiz.findOne({title: quizTopic});
-    
-    if(existingQuiz && existingQuizWithQuestion){
-      existingQuiz.quizStatus = quizStatus;
-      existingQuizWithQuestion.quizStatus = quizStatus;
-      await existingQuiz.save();
-      await existingQuizWithQuestion.save();
-    }
-    if(!existingQuiz) return res.status(404).json({ message: "Quiz not found" });
-
     const existingQuizUser = user.totalquizzes.find(quiz => quiz.name === quizTopic);
-    
 
-    if (existingQuiz && !existingQuizUser) {
+    if (existingQuizUser) {
+      existingQuizUser.correct = correct;
+      existingQuizUser.wrong = wrong;
+      existingQuizUser.notattempted = notattempted;
+      existingQuizUser.quizStatus = quizStatus;
+    } else {
       user.totalquizzes.push({
+        quizId: quizId,
         name: quizTopic,
         correct: correct,
         wrong: wrong,
-        notattempted: notattempted
+        notattempted: notattempted,
+        quizStatus: quizStatus
       });
     } 
 

@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const quizSchema = new mongoose.Schema({
+  quizId: {
+    type: String
+  },
   name: {
     type: String,
     required:true,
@@ -17,6 +20,11 @@ const quizSchema = new mongoose.Schema({
   notattempted: {
     type: Number,
     default: 0
+  },
+  quizStatus: {
+    type: String,
+    required:true,
+    default:"inactive"
   }
 }, { _id: false });
 
@@ -32,7 +40,8 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    index: true
   },
   password: {
     type: String,

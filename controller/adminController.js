@@ -3,6 +3,7 @@ const AdminUser = require('../model/admin');
 const Quiz = require('../model/quiz');
 const Quizlist = require('../model/quizlist');
 const { generateToken } = require('../config/jwt');
+const mongoose = require('mongoose');
 
 const loginAdmin = async (req, res) => {
   try {
@@ -34,10 +35,10 @@ const createQuiz = async (req, res) => {
   try {
     const { title, startTime, expireTime, quizStatus, date, questions } = req.body;
 
-    const quizExist = await Quiz.findOne({ title: title });
-    if (quizExist) return res.status(409).json({ message: "Quiz Already Exist" });
+    const newId = new mongoose.Types.ObjectId();
 
     const newQuiz = new Quiz({
+      _id: newId,
       title,
       startTime,
       expireTime,
@@ -47,6 +48,7 @@ const createQuiz = async (req, res) => {
     });
 
     const quizlist = new Quizlist({
+      _id: newId,
       title,
       startTime,
       expireTime,
