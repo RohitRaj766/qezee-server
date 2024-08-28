@@ -32,6 +32,7 @@ const loginAdmin = async (req, res) => {
 };
 
 const createQuiz = async (req, res) => {
+  checkAndUpdateAllQuizzes();
   try {
     const { title, startTime, expireTime, quizStatus, date, questions } = req.body;
 
@@ -67,6 +68,7 @@ const createQuiz = async (req, res) => {
 };
 
 const getTotalQuizzes = async (req, res) => {
+  checkAndUpdateAllQuizzes();
   try {
     const quizzes = await Quiz.find();
     res.status(200).json(quizzes);
@@ -90,15 +92,9 @@ const checkAndUpdateAllQuizzes = async () => {
 
     const currentDateTimeIST = convertToIST(currentDateTimeUTC);
     const expireDateTimeUTC = new Date(quiz.expireTime);
-    // console.log(currentDateTimeIST)
     const expireDateTimeIST = convertToIST(expireDateTimeUTC);
 
-    // console.log("Quiz ID:", quiz._id);
-    // console.log("Current Date and Time (IST):", currentDateTimeIST.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
-    // console.log("Expire Date and Time (IST):", expireDateTimeIST.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
-
-    let flag = currentDateTimeIST > expireDateTimeIST;
-    // console.log("Is current time after expire time?", flag);
+    let flag = currentDateTimeIST > expireDateTimeUTC;
     if (flag) {
       quiz.quizStatus = 'expired';
       await quiz.save();
@@ -114,11 +110,10 @@ const checkAndUpdateAllQuizzes = async () => {
   });
 };
 
-checkAndUpdateAllQuizzes();
-setInterval(checkAndUpdateAllQuizzes, 21600000);
 
 module.exports = {
   loginAdmin,
   createQuiz,
-  getTotalQuizzes
+  getTotalQuizzes,
+  checkAndUpdateAllQuizzes
 };

@@ -5,6 +5,7 @@ const Quizlist = require("../model/quizlist");
 const { calculateReputation, generateOTP } = require('../utils');
 const sendMail = require('../config/mailer');
 const { generateToken,verifyToken } = require("../config/jwt");
+const {checkAndUpdateAllQuizzes} = require('./adminController');
 
 let otpStore = {};
 
@@ -105,6 +106,7 @@ const verifyOtp = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  checkAndUpdateAllQuizzes();
   try {
     const { id, result } = req.body;
 
@@ -156,6 +158,7 @@ const getLeaderboard = async (req, res) => {
 };
 
 const getQuizzesList = async (req, res) => {
+  checkAndUpdateAllQuizzes();
   try {
     const quizzes = await Quizlist.find();
     res.status(200).json(quizzes);
@@ -166,6 +169,7 @@ const getQuizzesList = async (req, res) => {
 };
 
 const getQuizByTitle = async (req, res) => {
+  checkAndUpdateAllQuizzes();
   try {
     const quiz = await Quiz.findOne({ title: req.query.title });
     if (!quiz) {
@@ -233,6 +237,7 @@ const verifyUserToken = async (req, res) => {
 
 
 const updateQuizResults = async (req, res) => {
+  checkAndUpdateAllQuizzes();
   try {
     const { email } = req.query;
     const { quizId, quizTopic, correct, wrong, notattempted, quizStatus } = req.body;
