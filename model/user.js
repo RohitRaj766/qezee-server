@@ -81,6 +81,14 @@ const userSchema = new mongoose.Schema({
       default: 0
     }
   },
+  globalrank:{
+    type: Number,
+    default: 0
+  },
+  reputation:{
+    type: String,
+    default: "goblin"
+  },
   totalquizzes: [quizSchema] 
 });
 

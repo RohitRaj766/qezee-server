@@ -136,26 +136,36 @@ const updateUser = async (req, res) => {
 
 const getLeaderboard = async (req, res) => {
   try {
-    const users = await User.find({}, 'firstname lastname college enrollment totalquestions.correct');
+    const users = await User.find({}, 'firstname lastname college enrollment totalquestions.correct globlerank');
     users.sort((a, b) => b.totalquestions.correct - a.totalquestions.correct);
-      const leaderboard = users.map((user, index) => {
+
+    const leaderboard = users.map((user, index) => {
       const totalCorrect = user.totalquestions.correct || 0;
       const reputation = calculateReputation(totalCorrect, index);
+      
+      user.globalrank = index + 1;
+      user.reputation = reputation; 
+      user.save();
+
       return {
         firstname: user.firstname,
         lastname: user.lastname,
         college: user.college,
         enrollment: user.enrollment,
         totalCorrect: totalCorrect,
-        reputation: reputation
+        reputation: reputation,
+        rank: user.globalrank
       };
     });
+
     res.status(200).json(leaderboard);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const getQuizzesList = async (req, res) => {
   checkAndUpdateAllQuizzes();
