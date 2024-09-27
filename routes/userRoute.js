@@ -10,7 +10,8 @@ const {
   verifyUserToken,
   getQuizzesList,
   getQuizByTitle,
-  updateQuizResults 
+  updateQuizResults,
+  addUserAttempt
 } = require("../controller/userController");
 
 router.post("/registration", registerUser);
@@ -22,5 +23,8 @@ router.get("/verify-token", userMiddleware, verifyUserToken);
 router.get("/quiz-list", userMiddleware, getQuizzesList);
 router.get("/quiz-title", userMiddleware, getQuizByTitle);
 router.patch("/submit-result", userMiddleware, updateQuizResults);
+router.get("/quiz-list-userattempts", getQuizzesList);
+// Add a new user attempt
+router.patch('/quizzes/:quizId/attempts',userMiddleware ,addUserAttempt);
 
 module.exports = router;

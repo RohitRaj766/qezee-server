@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const AdminUser = require('../model/admin');
-const Quiz = require('../model/quiz');
+const {Quiz} = require('../model/quiz');
 const Quizlist = require('../model/quizlist');
 const { generateToken } = require('../config/jwt');
 const mongoose = require('mongoose');
