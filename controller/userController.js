@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../model/user");
-const Quiz = require("../model/quiz");
+const {Quiz} = require("../model/quiz");
 const Quizlist = require("../model/quizlist");
 const { calculateReputation, generateOTP } = require('../utils');
 const sendMail = require('../config/mailer');
@@ -294,6 +294,36 @@ const updateQuizResults = async (req, res) => {
   }
 };
 
+const addUserAttempt = async (req, res) => {
+  const { quizId, userId, enrollment, name, correctAnswers, wrongAnswers, notattempted } = req.body;
+
+  try {
+      const quiz = await Quiz.findById(quizId);
+      const quizList = await Quizlist.findById(quizId);
+      if (!quiz) {
+          return res.status(404).json({ message: 'Quiz not found' });
+      }
+
+      const newAttempt = {
+          userId,
+          name,
+          enrollment,
+          correctAnswers,
+          wrongAnswers,
+          notattempted,
+      };
+
+      quiz.userAttemptedList.push(newAttempt);
+      quizList.userAttemptedList.push(newAttempt);
+      await quiz.save();
+      await quizList.save();
+
+      res.status(201).json({ message: 'User attempt added successfully', quiz });
+  } catch (error) {
+      res.status(500).json({ message: 'Error adding user attempt', error });
+  }
+};
+
 module.exports = {
   registerUser,
   verifyOtp,
@@ -303,5 +333,6 @@ module.exports = {
   getQuizByTitle,
   loginUser,
   verifyUserToken,
-  updateQuizResults
+  updateQuizResults,
+  addUserAttempt
 };
