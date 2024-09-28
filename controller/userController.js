@@ -3,7 +3,7 @@ const User = require("../model/user");
 const {Quiz} = require("../model/quiz");
 const Quizlist = require("../model/quizlist");
 const { calculateReputation, generateOTP } = require('../utils');
-const sendMail = require('../config/mailer');
+const {sendMail,sendMailpasswordreset} = require('../config/mailer');
 const { generateToken,verifyToken } = require("../config/jwt");
 const {checkAndUpdateAllQuizzes} = require('./adminController');
 
@@ -315,6 +315,55 @@ const addUserAttempt = async (req, res) => {
   }
 };
 
+const generateTokenPasswordChange = () => {
+  return Math.random().toString(36).substr(2); 
+};
+
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  // Check if the user exists
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const token = generateTokenPasswordChange();
+  const expiry = Date.now() + 300000; 
+
+  otpStore[email] = { token, expiry };
+
+  // for local
+  // const resetLink = `http://localhost:3000/reset-password/${token}`; 
+  // for devlopment
+  const resetLink = `https://qezee.onrender.com/reset-password/${token}`; 
+  await sendMailpasswordreset(email, resetLink);
+  res.status(200).json({ message: 'Password reset link sent to email' });
+};
+
+const resetPassword = async (req, res) => {
+  const { token, email, newPassword } = req.body;
+
+  const resetData = otpStore[email];
+  if (!resetData || resetData.token !== token || Date.now() > resetData.expiry) {
+    return res.status(400).json({ error: "Invalid or expired token" });
+  }
+
+  try {
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.updateOne({ email }, { password: hashedPassword });
+
+    // Clean up OTP store
+    delete otpStore[email];
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   registerUser,
   verifyOtp,
@@ -325,5 +374,7 @@ module.exports = {
   loginUser,
   verifyUserToken,
   updateQuizResults,
-  addUserAttempt
+  addUserAttempt,
+  requestPasswordReset,
+  resetPassword
 };
