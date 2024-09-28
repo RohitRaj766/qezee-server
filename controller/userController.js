@@ -178,10 +178,10 @@ const getQuizzesList = async (req, res) => {
   }
 };
 
-const getQuizByTitle = async (req, res) => {
+const getQuizById = async (req, res) => {
   checkAndUpdateAllQuizzes();
   try {
-    const quiz = await Quiz.findOne({ title: req.query.title });
+    const quiz = await Quiz.findOne({ _id: req.query.id });
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
@@ -264,14 +264,6 @@ const updateQuizResults = async (req, res) => {
       user.totalquestions.notattempted += notattempted;
     }
 
-    const existingQuizUser = user.totalquizzes.find(quiz => quiz.name === quizTopic);
-
-    if (existingQuizUser) {
-      existingQuizUser.correct = correct;
-      existingQuizUser.wrong = wrong;
-      existingQuizUser.notattempted = notattempted;
-      existingQuizUser.quizStatus = quizStatus;
-    } else {
       user.totalquizzes.push({
         quizId: quizId,
         name: quizTopic,
@@ -280,7 +272,6 @@ const updateQuizResults = async (req, res) => {
         notattempted: notattempted,
         quizStatus: quizStatus
       });
-    } 
 
     await user.save();
     res.status(200).json({ 
@@ -330,7 +321,7 @@ module.exports = {
   updateUser,
   getLeaderboard,
   getQuizzesList,
-  getQuizByTitle,
+  getQuizById,
   loginUser,
   verifyUserToken,
   updateQuizResults,

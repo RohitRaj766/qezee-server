@@ -9,7 +9,7 @@ const {
   loginUser,
   verifyUserToken,
   getQuizzesList,
-  getQuizByTitle,
+  getQuizById,
   updateQuizResults,
   addUserAttempt
 } = require("../controller/userController");
@@ -21,7 +21,7 @@ router.put("/updateUser", userMiddleware, updateUser);
 router.get("/leaderboard", userMiddleware, getLeaderboard);
 router.get("/verify-token", userMiddleware, verifyUserToken);
 router.get("/quiz-list", userMiddleware, getQuizzesList);
-router.get("/quiz-title", userMiddleware, getQuizByTitle);
+router.get("/quiz-id", userMiddleware, getQuizById);
 router.patch("/submit-result", userMiddleware, updateQuizResults);
 router.get("/quiz-list-userattempts", getQuizzesList);
 // Add a new user attempt
