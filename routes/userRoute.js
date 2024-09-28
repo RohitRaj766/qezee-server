@@ -11,7 +11,9 @@ const {
   getQuizzesList,
   getQuizById,
   updateQuizResults,
-  addUserAttempt
+  addUserAttempt,
+  requestPasswordReset,
+  resetPassword
 } = require("../controller/userController");
 
 router.post("/registration", registerUser);
@@ -26,5 +28,7 @@ router.patch("/submit-result", userMiddleware, updateQuizResults);
 router.get("/quiz-list-userattempts", getQuizzesList);
 // Add a new user attempt
 router.patch('/quizzes/:quizId/attempts',userMiddleware ,addUserAttempt);
+router.post('/request-password-reset', requestPasswordReset);
+router.post('/reset-password', resetPassword);
 
 module.exports = router;

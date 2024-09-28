@@ -46,4 +46,29 @@ async function sendMail(to, otp) {
   }
 }
 
-module.exports = sendMail;
+async function sendMailpasswordreset(to, content) {
+  const text = `Click here to reset your password: ${content}`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2 style="color: #4CAF50;">Password Reset Request</h2>
+      <p>To reset your password, please click the link below:</p>
+      <a href="${content}" style="color: #007bff;">Reset Password</a>
+      <p>If you did not request this, please ignore this email.</p>
+      <p>${content}</p>
+    </div>
+  `;
+
+  const info = await transporter.sendMail({
+    from: `"Qezee Team" <${process.env.EMAIL}>`,
+    to: to,
+    subject: "Password Reset Request",
+    text: text,
+    html: html,
+  });
+  console.log("Email Sent: %s", info.messageId);
+}
+
+module.exports = {
+  sendMail,
+  sendMailpasswordreset
+};
