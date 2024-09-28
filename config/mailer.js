@@ -54,7 +54,6 @@ async function sendMailpasswordreset(to, content) {
       <p>To reset your password, please click the link below:</p>
       <a href="${content}" style="color: #007bff;">Reset Password</a>
       <p>If you did not request this, please ignore this email.</p>
-      <p>${content}</p>
     </div>
   `;
 
