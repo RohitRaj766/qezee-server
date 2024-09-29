@@ -336,7 +336,8 @@ const requestPasswordReset = async (req, res) => {
   // for local
   // const resetLink = `http://localhost:3000/reset-password/${token}`; 
   // for devlopment
-  const resetLink = `https://qezee.onrender.com/reset-password/${token}`; 
+  // const resetLink = `https://qezee.onrender.com/reset-password/${token}`; 
+  const resetLink = `https://qezee.vercel.app/reset-password/${token}`; 
   await sendMailpasswordreset(email, resetLink);
   res.status(200).json({ message: 'Password reset link sent to email' });
 };
