@@ -4,7 +4,7 @@
   "description": "this is a quiz platfrom to competition",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "author": "rohit raj",
   "license": "ISC",
