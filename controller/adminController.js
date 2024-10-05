@@ -84,7 +84,7 @@ const checkAndUpdateAllQuizzes = async () => {
  
   const convertToIST = (date) => {
     const istOffset = 5.5 * 60 * 60 * 1000;
-    return new Date(date.getTime() + istOffset);
+    return new Date(date.getTime());
   };
   
   const checkAndUpdate = async (quiz) => {
