@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-// mongoose.connect(process.env.MONGO_URL_PRODUCTION, {
-//     // useNewUrlParser: true,
-//     // useUnifiedTopology: true
-// }).then(() => console.log('connected to mongoDB server')).catch((err) => console.error('connection to mongoDB error', err));
-
-
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect(process.env.MONGO_URL_PRODUCTION, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true
 }).then(() => console.log('connected to mongoDB server')).catch((err) => console.error('connection to mongoDB error', err));
+
+
+// mongoose.connect(process.env.MONGO_URL_DEVELOPMENT, {
+//     // useNewUrlParser: true,
+//     // useUnifiedTopology: true
+// }).then(() => console.log('connected to mongoDB server')).catch((err) => console.error('connection to mongoDB error', err));
 
 
 
